@@ -43,27 +43,41 @@
       <div>
         <div
           class="pt-5 text-4xl text-gray-100 px-4 md:px-8 capitalize font-title flex items-center justify-center"
+          v-if="!isFilterActive"
         >
           <div>{{ beer[activeBeer].name }}</div>
-
-          <div class="w-8 px-2">
+        </div>
+        <div
+          class="pt-5 text-4xl text-gray-100 px-4 md:px-8 capitalize font-title flex items-center justify-center"
+        >
+          <div v-if="isFilterActive" class="mb-4 flex">
+            <input
+              class="rounded-md text-gray-900 p-2"
+              type="text"
+              name=""
+              id=""
+              v-model="name"
+            />
             <svg
+              class=" w-16 animate-pulse"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              v-on:click="fetchAllBeer"
             >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                d="M13 5l7 7-7 7M5 5l7 7-7 7"
               />
             </svg>
           </div>
         </div>
         <div
-          class="grid grid-cols-1 pt-5 text-xl text-white capitalize px-4 md:px-8 py-4 md:py-8 text-justify"
+          v-if="!isFilterActive"
+          class="grid grid-cols-1 pt-5 text-xl text-white capitalize px-4 md:px-8 py-4 md:py-8 text-justify "
         >
           <div class="capitalize">{{ beer[activeBeer].description }}</div>
         </div>
@@ -118,19 +132,22 @@
 import axios from "axios";
 
 export default {
+  components: {},
+
   data() {
     return {
       beer: [],
       activeBeer: 0,
+      isFilterActive: true,
+      name: "",
     };
   },
   computed: {
     imgURL() {
-      console.log("hajrá");
       if (this.beer[this.activeBeer].image_url) {
         return this.beer[this.activeBeer].image_url;
       }
-      return "no puic";
+      return "";
     },
   },
 
@@ -142,10 +159,16 @@ export default {
     },
 
     fetchAllBeer() {
-      axios.get("https://api.punkapi.com/v2/beers").then((response) => {
-        this.beer = response.data;
-        this.activeBeer = Math.floor(Math.random() * this.beer.length);
-      });
+      console.log(this.name);
+
+      axios
+        .get(`https://api.punkapi.com/v2/beers?beer_name=${this.name}`)
+        .then((response) => {
+          console.log(response.data);
+          this.beer = response.data;
+          this.activeBeer = Math.floor(Math.random() * this.beer.length);
+          this.isFilterActive = false;
+        });
     },
 
     nextBeer() {
