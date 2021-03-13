@@ -215,7 +215,7 @@ export default {
       if (this.beer.length > 1 && this.activeBeer > 0) {
         this.activeBeer--;
         return;
-      } else if (this.beer.length > 1 && this.activeBeer === 1) {
+      } else if (this.beer.length > 1 && this.activeBeer === 0) {
         return;
       }
       this.fetchRandomBeer();
